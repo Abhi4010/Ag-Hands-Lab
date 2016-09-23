@@ -1,8 +1,9 @@
 package com.lab.hands.ag.expensehandler;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class DashBoardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,8 +31,31 @@ public class DashBoardActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                final AppCompatDialog dialog = new AppCompatDialog(DashBoardActivity.this);
+                dialog.setTitle("Add New Purchase");
+                dialog.setContentView(R.layout.dialog_add_item);
+                final EditText mPurchaseName, mAmount;
+                mPurchaseName =(EditText) dialog.findViewById(R.id.input_product_name);
+                mAmount =(EditText) dialog.findViewById(R.id.input_amount);
+                Button mButton = (Button) dialog.findViewById(R.id.submit_button);
+                mButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(mPurchaseName.getText().length() == 0 || mAmount.getText().length() == 0)
+                            return;
+                        else
+                        {
+                            dialog.dismiss();
+                            AddPurchaseToDataBase(mPurchaseName.getText().toString(),mAmount.getText().toString());
+
+                        }
+                    }
+                });
+                dialog.show();
+
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
@@ -40,6 +67,10 @@ public class DashBoardActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void AddPurchaseToDataBase(String purchaseName , String amount) {
+        Toast.makeText(this,"John needs to add this",Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -80,18 +111,16 @@ public class DashBoardActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.last_seven_days) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(DashBoardActivity.this,PurchaseLogActivity.class);
+            intent.putExtra(getString(R.string.range),"7");
+            startActivity(intent);
+        } else if (id == R.id.last_thirty_days) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            Intent intent = new Intent(DashBoardActivity.this,PurchaseLogActivity.class);
+            intent.putExtra(getString(R.string.range),"30");
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
